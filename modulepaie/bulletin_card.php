@@ -355,6 +355,8 @@ if ($id > 0) {
 	print '<tr><td class="titlefield">'.$langs->trans("SalaireBrut").'</td><td class="right amount">'.price($object->brut, 0, $langs, 1, -1, 2, $conf->currency).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalCotisationsSalariales").'</td><td class="right">'.price($object->total_cot_sal, 0, $langs, 1, -1, 2, $conf->currency).'</td></tr>';
 	print '<tr><td><strong>'.$langs->trans("NetAPayer").'</strong></td><td class="right"><strong>'.price($object->net_a_payer, 0, $langs, 1, -1, 2, $conf->currency).'</strong></td></tr>';
+	print '<tr><td>'.$langs->trans("ImpotSource").' ('.price($object->taux_pas, 0, $langs, 1, -1, 2).' %)</td><td class="right">'.price($object->montant_pas, 0, $langs, 1, -1, 2, $conf->currency).'</td></tr>';
+	print '<tr><td><strong>'.$langs->trans("NetPaye").'</strong></td><td class="right"><strong>'.price($object->net_apres_impot, 0, $langs, 1, -1, 2, $conf->currency).'</strong></td></tr>';
 	print '<tr><td>'.$langs->trans("NetImposable").'</td><td class="right">'.price($object->net_imposable, 0, $langs, 1, -1, 2, $conf->currency).'</td></tr>';
 	print '<tr><td>'.$langs->trans("NetSocial").'</td><td class="right">'.price($object->net_social, 0, $langs, 1, -1, 2, $conf->currency).'</td></tr>';
 	print '<tr><td>'.$langs->trans("CoutEmployeur").'</td><td class="right">'.price($object->cout_employeur, 0, $langs, 1, -1, 2, $conf->currency).'</td></tr>';

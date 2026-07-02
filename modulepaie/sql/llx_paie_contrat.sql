@@ -26,6 +26,7 @@ CREATE TABLE llx_paie_contrat(
 	type_contrat    varchar(16) DEFAULT 'CDI',
 	categorie       varchar(32) DEFAULT 'non_cadre',
 	salaire_base    double(24,8) DEFAULT 0,
+	taux_pas        double(8,4) DEFAULT 0,
 	temps_travail   double(10,4) DEFAULT 151.67,
 	taux_horaire    double(24,8) DEFAULT 0,
 	active          integer DEFAULT 1 NOT NULL,

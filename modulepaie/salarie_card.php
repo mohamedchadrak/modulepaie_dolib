@@ -58,6 +58,7 @@ if ($action == 'add' && $candwrite) {
 	$object->type_contrat = GETPOST('type_contrat', 'alpha');
 	$object->categorie = GETPOST('categorie', 'alpha');
 	$object->salaire_base = price2num(GETPOST('salaire_base', 'alpha'));
+	$object->taux_pas = price2num(GETPOST('taux_pas', 'alpha'));
 	$object->temps_travail = price2num(GETPOST('temps_travail', 'alpha'));
 	$object->date_entree = dol_mktime(0, 0, 0, GETPOST('date_entreemonth', 'int'), GETPOST('date_entreeday', 'int'), GETPOST('date_entreeyear', 'int'));
 	$object->date_anciennete = $object->date_entree;
@@ -93,6 +94,7 @@ if ($action == 'update' && $candwrite && $id > 0) {
 	$object->type_contrat = GETPOST('type_contrat', 'alpha');
 	$object->categorie = GETPOST('categorie', 'alpha');
 	$object->salaire_base = price2num(GETPOST('salaire_base', 'alpha'));
+	$object->taux_pas = price2num(GETPOST('taux_pas', 'alpha'));
 	$object->temps_travail = price2num(GETPOST('temps_travail', 'alpha'));
 	$object->taux_horaire = 0; // recomputed
 	$object->date_entree = dol_mktime(0, 0, 0, GETPOST('date_entreemonth', 'int'), GETPOST('date_entreeday', 'int'), GETPOST('date_entreeyear', 'int'));
@@ -172,6 +174,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans("CategorieSalarie").'</td><td>'.$form->selectarray('categorie', $categories, GETPOST('categorie') ? GETPOST('categorie') : 'non_cadre').'</td></tr>';
 	print '<tr><td>'.$langs->trans("DateEntree").'</td><td>'.$form->selectDate($def_dateentree, 'date_entree', 0, 0, 1, '', 1, 0).'</td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans("SalaireBase").'</td><td><input type="text" name="salaire_base" class="width100" value="'.dol_escape_htmltag($def_salaire).'"> '.$conf->currency.'</td></tr>';
+	print '<tr><td>'.$langs->trans("TauxPas").'</td><td><input type="text" name="taux_pas" class="width75" value="'.dol_escape_htmltag(GETPOST('taux_pas')).'"> % <span class="opacitymedium">'.$langs->trans("TauxPasHelp").'</span></td></tr>';
 	print '<tr><td>'.$langs->trans("TempsTravail").'</td><td><input type="text" name="temps_travail" class="width75" value="'.dol_escape_htmltag($def_temps).'"> h</td></tr>';
 	print '<tr><td>'.$langs->trans("ContratActif").'</td><td><input type="checkbox" name="active" value="1" checked></td></tr>';
 	print '<tr><td>'.$langs->trans("Note").'</td><td><textarea name="note" class="quatrevingtpercent" rows="2"></textarea></td></tr>';
@@ -216,6 +219,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans("CategorieSalarie").'</td><td>'.$form->selectarray('categorie', $categories, $object->categorie).'</td></tr>';
 	print '<tr><td>'.$langs->trans("DateEntree").'</td><td>'.$form->selectDate($object->date_entree, 'date_entree', 0, 0, 1, '', 1, 0).'</td></tr>';
 	print '<tr><td>'.$langs->trans("SalaireBase").'</td><td><input type="text" name="salaire_base" class="width100" value="'.dol_escape_htmltag($object->salaire_base).'"> '.$conf->currency.'</td></tr>';
+	print '<tr><td>'.$langs->trans("TauxPas").'</td><td><input type="text" name="taux_pas" class="width75" value="'.dol_escape_htmltag($object->taux_pas).'"> %</td></tr>';
 	print '<tr><td>'.$langs->trans("TempsTravail").'</td><td><input type="text" name="temps_travail" class="width75" value="'.dol_escape_htmltag($object->temps_travail).'"> h</td></tr>';
 	print '<tr><td>'.$langs->trans("ContratActif").'</td><td><input type="checkbox" name="active" value="1" '.($object->active ? 'checked' : '').'></td></tr>';
 	print '<tr><td>'.$langs->trans("Note").'</td><td><textarea name="note" class="quatrevingtpercent" rows="2">'.dol_escape_htmltag($object->note).'</textarea></td></tr>';
@@ -250,6 +254,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans("TypeContrat").'</td><td>'.dol_escape_htmltag($object->type_contrat).' ('.($object->categorie == 'cadre' ? $langs->trans('Cadre') : $langs->trans('NonCadre')).')</td></tr>';
 	print '<tr><td>'.$langs->trans("DateEntree").'</td><td>'.($object->date_entree ? dol_print_date($object->date_entree, 'day') : '').'</td></tr>';
 	print '<tr><td>'.$langs->trans("SalaireBase").'</td><td>'.price($object->salaire_base, 0, $langs, 1, -1, 2, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TauxPas").'</td><td>'.price($object->taux_pas, 0, $langs, 1, -1, 2).' %</td></tr>';
 	print '<tr><td>'.$langs->trans("TempsTravail").'</td><td>'.$object->temps_travail.' h</td></tr>';
 	print '<tr><td>'.$langs->trans("TauxHoraire").'</td><td>'.price($object->taux_horaire, 0, $langs, 1, -1, 4, $conf->currency).'</td></tr>';
 	print '</table>';

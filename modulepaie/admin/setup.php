@@ -52,6 +52,12 @@ $configItems = array(
 	'MODULEPAIE_BANK_ACCOUNT' => 'int',
 	'MODULEPAIE_AUTO_BANK' => 'int',
 	'MODULEPAIE_MATRICULE_PREFIX' => 'alpha',
+	'MODULEPAIE_CPT_SALAIRES' => 'alpha',
+	'MODULEPAIE_CPT_CHARGES' => 'alpha',
+	'MODULEPAIE_CPT_PERSONNEL' => 'alpha',
+	'MODULEPAIE_CPT_URSSAF' => 'alpha',
+	'MODULEPAIE_CPT_RETRAITE' => 'alpha',
+	'MODULEPAIE_CPT_PAS' => 'alpha',
 );
 
 /*
@@ -155,6 +161,22 @@ print '<tr class="oddeven"><td>'.$langs->trans("AutoEcritureBanque").'</td><td>'
 print '<input type="checkbox" name="MODULEPAIE_AUTO_BANK" value="1" '.(getDolGlobalString('MODULEPAIE_AUTO_BANK', '1') ? 'checked' : '').'>';
 print ' <span class="opacitymedium">'.$langs->trans("AutoEcritureBanqueHelp").'</span>';
 print '</td></tr>';
+
+// Comptes comptables du journal de paie.
+print '<tr class="liste_titre"><td>'.$langs->trans("ComptesJournalPaie").'</td><td></td></tr>';
+$comptes = array(
+	'MODULEPAIE_CPT_SALAIRES' => array('CptSalaires', '641000'),
+	'MODULEPAIE_CPT_CHARGES' => array('CptCharges', '645000'),
+	'MODULEPAIE_CPT_PERSONNEL' => array('CptPersonnel', '421000'),
+	'MODULEPAIE_CPT_URSSAF' => array('CptUrssaf', '431000'),
+	'MODULEPAIE_CPT_RETRAITE' => array('CptRetraite', '437000'),
+	'MODULEPAIE_CPT_PAS' => array('CptPas', '442100'),
+);
+foreach ($comptes as $key => $info) {
+	print '<tr class="oddeven"><td>'.$langs->trans($info[0]).'</td><td>';
+	print '<input type="text" name="'.$key.'" class="width100" value="'.dol_escape_htmltag(getDolGlobalString($key, $info[1])).'">';
+	print '</td></tr>';
+}
 
 print '</table>';
 

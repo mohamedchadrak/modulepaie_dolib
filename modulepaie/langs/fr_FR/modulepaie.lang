@@ -188,6 +188,29 @@ PdfNetSocialInfo = Le montant net social est le revenu net servant de base au ca
 PdfConservation = Dans votre intérêt et pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée.
 PdfPaidLeave = Congés payés
 
+# Prélèvement à la source
+TauxPas = Taux de prélèvement à la source
+TauxPasHelp = Taux personnalisé transmis par la DGFiP (0 si non concerné)
+ImpotSource = Impôt sur le revenu prélevé à la source
+NetPaye = Net payé en euros
+
+# Export comptable
+MenuExportCompta = Export comptable
+ExportCompta = Export comptable — Journal de paie
+ExportComptaIntro = Génère les écritures comptables des bulletins validés de la période (salaires bruts 641, charges patronales 645, organismes 431/437, prélèvement à la source 4421, personnel 421). Export CSV compatible Excel et imports comptables.
+TelechargerCSV = Télécharger le CSV
+FullYear = Année complète
+Piece = Pièce
+CompteComptable = Compte
+EcrituresDesequilibrees = Attention : les écritures ne sont pas équilibrées, vérifiez les bulletins.
+ComptesJournalPaie = Comptes comptables (journal de paie)
+CptSalaires = Salaires bruts (641)
+CptCharges = Charges patronales (645)
+CptPersonnel = Personnel - rémunérations dues (421)
+CptUrssaf = URSSAF et organismes sociaux (431)
+CptRetraite = Retraite complémentaire (437)
+CptPas = Prélèvement à la source (4421)
+
 # Banque / comptabilité
 CompteBancairePaie = Compte bancaire des salaires
 CompteBancairePaieHelp = Compte sur lequel l'écriture du net à payer est créée au passage en "Payé"

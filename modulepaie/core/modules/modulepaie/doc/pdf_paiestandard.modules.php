@@ -260,6 +260,20 @@ class pdf_paiestandard
 		$pdf->Cell(40, 6, price($object->net_a_payer, 0, $outputlangs, 0, -1, 2, $conf->currency), 'TR', 1, 'R');
 		$y += 6;
 
+		// Prélèvement à la source + net payé (obligatoire depuis 2019).
+		$pdf->SetFont('', '', 8.5);
+		$pdf->SetXY($x, $y);
+		$paslabel = $outputlangs->transnoentities("ImpotSource").' ('.$outputlangs->transnoentities("Base").' '.price($object->net_imposable, 0, $outputlangs, 0, -1, 2).' x '.price($object->taux_pas, 0, $outputlangs, 0, -1, 2).' %)';
+		$pdf->Cell($labw, 5, $outputlangs->convToOutputCharset($paslabel), 'LR', 0, 'L');
+		$pdf->Cell(40, 5, '- '.price($object->montant_pas, 0, $outputlangs, 0, -1, 2, $conf->currency), 'R', 1, 'R');
+		$y += 5;
+
+		$pdf->SetFont('', 'B', 9);
+		$pdf->SetXY($x, $y);
+		$pdf->Cell($labw, 6, $outputlangs->transnoentities("NetPaye"), 'LR', 0, 'L');
+		$pdf->Cell(40, 6, price($object->net_apres_impot, 0, $outputlangs, 0, -1, 2, $conf->currency), 'R', 1, 'R');
+		$y += 6;
+
 		$pdf->SetFont('', '', 8.5);
 		$rows = array(
 			array($outputlangs->transnoentities("NetImposable"), $object->net_imposable),

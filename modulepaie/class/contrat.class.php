@@ -49,6 +49,8 @@ class PaieContrat extends CommonObject
 	public $type_contrat;   // CDI, CDD, ...
 	public $categorie;      // cadre, non_cadre
 	public $salaire_base;
+	/** @var float Taux de prelevement a la source (%) */
+	public $taux_pas;
 	public $temps_travail;  // heures mensuelles
 	public $taux_horaire;
 	public $active;
@@ -126,7 +128,7 @@ class PaieContrat extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paie_contrat(";
 		$sql .= "entity, fk_user, matricule, num_secu, emploi, qualification, classification, coefficient, niveau, echelon, convention,";
-		$sql .= " date_entree, date_anciennete, date_sortie, type_contrat, categorie, salaire_base, temps_travail, taux_horaire, active, note, date_creation, fk_user_creat";
+		$sql .= " date_entree, date_anciennete, date_sortie, type_contrat, categorie, salaire_base, taux_pas, temps_travail, taux_horaire, active, note, date_creation, fk_user_creat";
 		$sql .= ") VALUES (";
 		$sql .= ((int) $this->entity);
 		$sql .= ", ".((int) $this->fk_user);
@@ -145,6 +147,7 @@ class PaieContrat extends CommonObject
 		$sql .= ", '".$this->db->escape($this->type_contrat ? $this->type_contrat : 'CDI')."'";
 		$sql .= ", '".$this->db->escape($this->categorie ? $this->categorie : 'non_cadre')."'";
 		$sql .= ", ".((float) price2num($this->salaire_base));
+		$sql .= ", ".((float) price2num($this->taux_pas));
 		$sql .= ", ".((float) price2num($this->temps_travail));
 		$sql .= ", ".((float) price2num($this->taux_horaire));
 		$sql .= ", ".((int) (isset($this->active) ? $this->active : 1));
@@ -178,7 +181,7 @@ class PaieContrat extends CommonObject
 
 		$sql = "SELECT rowid, entity, fk_user, matricule, num_secu, emploi, qualification, classification,";
 		$sql .= " coefficient, niveau, echelon, convention, date_entree, date_anciennete, date_sortie,";
-		$sql .= " type_contrat, categorie, salaire_base, temps_travail, taux_horaire, active, note";
+		$sql .= " type_contrat, categorie, salaire_base, taux_pas, temps_travail, taux_horaire, active, note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paie_contrat";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -213,6 +216,7 @@ class PaieContrat extends CommonObject
 		$this->type_contrat = $obj->type_contrat;
 		$this->categorie = $obj->categorie;
 		$this->salaire_base = $obj->salaire_base;
+		$this->taux_pas = $obj->taux_pas;
 		$this->temps_travail = $obj->temps_travail;
 		$this->taux_horaire = $obj->taux_horaire;
 		$this->active = $obj->active;
@@ -266,6 +270,7 @@ class PaieContrat extends CommonObject
 		$sql .= ", type_contrat = '".$this->db->escape($this->type_contrat ? $this->type_contrat : 'CDI')."'";
 		$sql .= ", categorie = '".$this->db->escape($this->categorie ? $this->categorie : 'non_cadre')."'";
 		$sql .= ", salaire_base = ".((float) price2num($this->salaire_base));
+		$sql .= ", taux_pas = ".((float) price2num($this->taux_pas));
 		$sql .= ", temps_travail = ".((float) price2num($this->temps_travail));
 		$sql .= ", taux_horaire = ".((float) price2num($this->taux_horaire));
 		$sql .= ", active = ".((int) $this->active);

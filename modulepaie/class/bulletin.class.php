@@ -55,6 +55,12 @@ class PaieBulletin extends CommonObject
 	public $total_cot_sal;
 	public $total_cot_pat;
 	public $net_a_payer;
+	/** @var float Taux de prelevement a la source (%) */
+	public $taux_pas;
+	/** @var float Montant du prelevement a la source */
+	public $montant_pas;
+	/** @var float Net paye apres impot sur le revenu */
+	public $net_apres_impot;
 	public $net_imposable;
 	public $net_social;
 	public $cout_employeur;
@@ -171,7 +177,7 @@ class PaieBulletin extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paie_bulletin(";
 		$sql .= "entity, ref, fk_user, fk_contrat, date_debut, date_fin, date_paiement, salaire_base, heures, taux_horaire,";
-		$sql .= " plafond_ss, brut, total_cot_sal, total_cot_pat, net_a_payer, net_imposable, net_social, cout_employeur,";
+		$sql .= " plafond_ss, brut, total_cot_sal, total_cot_pat, net_a_payer, taux_pas, montant_pas, net_apres_impot, net_imposable, net_social, cout_employeur,";
 		$sql .= " cumul_brut, cumul_net_imp, cumul_net_social, conges_acquis, conges_pris, conges_solde,";
 		$sql .= " status, note_public, note_private, model_pdf, date_creation, fk_user_creat";
 		$sql .= ") VALUES (";
@@ -190,6 +196,9 @@ class PaieBulletin extends CommonObject
 		$sql .= ", ".((float) price2num($this->total_cot_sal));
 		$sql .= ", ".((float) price2num($this->total_cot_pat));
 		$sql .= ", ".((float) price2num($this->net_a_payer));
+		$sql .= ", ".((float) price2num($this->taux_pas));
+		$sql .= ", ".((float) price2num($this->montant_pas));
+		$sql .= ", ".((float) price2num($this->net_apres_impot));
 		$sql .= ", ".((float) price2num($this->net_imposable));
 		$sql .= ", ".((float) price2num($this->net_social));
 		$sql .= ", ".((float) price2num($this->cout_employeur));
@@ -277,7 +286,7 @@ class PaieBulletin extends CommonObject
 	public function fetch($id, $ref = '')
 	{
 		$sql = "SELECT rowid, entity, ref, fk_user, fk_contrat, date_debut, date_fin, date_paiement, salaire_base, heures, taux_horaire,";
-		$sql .= " plafond_ss, brut, total_cot_sal, total_cot_pat, net_a_payer, net_imposable, net_social, cout_employeur,";
+		$sql .= " plafond_ss, brut, total_cot_sal, total_cot_pat, net_a_payer, taux_pas, montant_pas, net_apres_impot, net_imposable, net_social, cout_employeur,";
 		$sql .= " cumul_brut, cumul_net_imp, cumul_net_social, conges_acquis, conges_pris, conges_solde,";
 		$sql .= " status, fk_bank, note_public, note_private, model_pdf, last_main_doc, date_creation, date_validation, fk_user_valid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paie_bulletin";
@@ -312,6 +321,9 @@ class PaieBulletin extends CommonObject
 		$this->total_cot_sal = $obj->total_cot_sal;
 		$this->total_cot_pat = $obj->total_cot_pat;
 		$this->net_a_payer = $obj->net_a_payer;
+		$this->taux_pas = $obj->taux_pas;
+		$this->montant_pas = $obj->montant_pas;
+		$this->net_apres_impot = $obj->net_apres_impot;
 		$this->net_imposable = $obj->net_imposable;
 		$this->net_social = $obj->net_social;
 		$this->cout_employeur = $obj->cout_employeur;
@@ -393,6 +405,7 @@ class PaieBulletin extends CommonObject
 		$this->salaire_base = $contrat->salaire_base;
 		$this->heures = $contrat->temps_travail ? $contrat->temps_travail : 151.67;
 		$this->taux_horaire = $contrat->taux_horaire;
+		$this->taux_pas = (float) $contrat->taux_pas;
 		if (empty($this->plafond_ss)) {
 			$this->plafond_ss = self::getPMSS();
 		}
@@ -550,6 +563,10 @@ class PaieBulletin extends CommonObject
 		$this->net_imposable = round($this->brut - $sal_deductible + $reintegration, 2);
 		$this->cout_employeur = round($this->brut + $this->total_cot_pat, 2);
 
+		// Prelevement a la source : assiette = net imposable, taux personnalise du contrat.
+		$this->montant_pas = round($this->net_imposable * ((float) $this->taux_pas) / 100, 2);
+		$this->net_apres_impot = round($this->net_a_payer - $this->montant_pas, 2);
+
 		// 4) Cumuls annuels (bulletins validés de la même année).
 		$this->computeCumuls();
 	}
@@ -629,6 +646,9 @@ class PaieBulletin extends CommonObject
 		$sql .= ", total_cot_sal = ".((float) price2num($this->total_cot_sal));
 		$sql .= ", total_cot_pat = ".((float) price2num($this->total_cot_pat));
 		$sql .= ", net_a_payer = ".((float) price2num($this->net_a_payer));
+		$sql .= ", taux_pas = ".((float) price2num($this->taux_pas));
+		$sql .= ", montant_pas = ".((float) price2num($this->montant_pas));
+		$sql .= ", net_apres_impot = ".((float) price2num($this->net_apres_impot));
 		$sql .= ", net_imposable = ".((float) price2num($this->net_imposable));
 		$sql .= ", net_social = ".((float) price2num($this->net_social));
 		$sql .= ", cout_employeur = ".((float) price2num($this->cout_employeur));
@@ -701,6 +721,9 @@ class PaieBulletin extends CommonObject
 		$sql .= ", total_cot_sal = ".((float) price2num($this->total_cot_sal));
 		$sql .= ", total_cot_pat = ".((float) price2num($this->total_cot_pat));
 		$sql .= ", net_a_payer = ".((float) price2num($this->net_a_payer));
+		$sql .= ", taux_pas = ".((float) price2num($this->taux_pas));
+		$sql .= ", montant_pas = ".((float) price2num($this->montant_pas));
+		$sql .= ", net_apres_impot = ".((float) price2num($this->net_apres_impot));
 		$sql .= ", net_imposable = ".((float) price2num($this->net_imposable));
 		$sql .= ", net_social = ".((float) price2num($this->net_social));
 		$sql .= ", cout_employeur = ".((float) price2num($this->cout_employeur));
@@ -750,7 +773,8 @@ class PaieBulletin extends CommonObject
 				}
 				$datepaie = $this->date_paiement ? $this->date_paiement : dol_now();
 				// Negative amount: money leaves the account (net to pay).
-				$bankline = $acc->addline($datepaie, 'VIR', $label, -1 * abs((float) $this->net_a_payer), '', 0, $user);
+				$montantpaye = ($this->net_apres_impot > 0 || $this->montant_pas > 0) ? $this->net_apres_impot : $this->net_a_payer;
+				$bankline = $acc->addline($datepaie, 'VIR', $label, -1 * abs((float) $montantpaye), '', 0, $user);
 				if ($bankline <= 0) {
 					$this->error = $acc->error ? $acc->error : 'ErrorCreatingBankLine';
 					$this->db->rollback();

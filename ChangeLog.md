@@ -1,5 +1,23 @@
 # ChangeLog — Module Paie Dolibarr
 
+## 1.2.0
+
+- **Prélèvement à la source (PAS)** : taux personnalisé par salarié (fiche
+  contrat), calcul sur le net imposable, affichage sur la fiche bulletin,
+  l'espace salarié et le PDF (« Impôt sur le revenu prélevé à la source » +
+  « Net payé en euros » — mention obligatoire depuis 2019). L'écriture
+  bancaire utilise désormais le net payé après impôt.
+- **Export comptable (journal de paie)** : nouvelle page qui génère les
+  écritures équilibrées des bulletins validés (641 salaires bruts, 645
+  charges patronales, 431 URSSAF/organismes, 437 retraite complémentaire,
+  4421 prélèvement à la source, 421 personnel) avec aperçu à l'écran et
+  export CSV (compatible Excel / imports comptables). Numéros de comptes
+  paramétrables dans la configuration.
+- **Création salarié** : matricule auto-généré (préfixe paramétrable) et
+  pré-remplissage des champs depuis la fiche utilisateur sélectionnée.
+- Migrations automatiques du schéma à la réactivation (aucune perte de
+  données).
+
 ## 1.1.0
 
 - **Espace self-service salarié** : droit dédié « Consulter ses propres

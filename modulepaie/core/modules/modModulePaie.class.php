@@ -53,7 +53,7 @@ class modModulePaie extends DolibarrModules
 		$this->editor_name = 'Mohamed Chadrak';
 		$this->editor_url = 'https://github.com/mohamedchadrak/modulepaie_dolib';
 
-		$this->version = '1.1.0';
+		$this->version = '1.2.0';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto = 'modulepaie@modulepaie';
 
@@ -224,6 +224,22 @@ class modModulePaie extends DolibarrModules
 			'user' => 2,
 		);
 
+		// Left menu - Export comptable
+		$this->menu[$r++] = array(
+			'fk_menu' => 'fk_mainmenu=modulepaie',
+			'type' => 'left',
+			'titre' => 'MenuExportCompta',
+			'mainmenu' => 'modulepaie',
+			'leftmenu' => 'modulepaie_export',
+			'url' => '/modulepaie/export_compta.php',
+			'langs' => 'modulepaie@modulepaie',
+			'position' => 1000 + $r,
+			'enabled' => '$conf->modulepaie->enabled',
+			'perms' => '$user->rights->modulepaie->bulletin->read',
+			'target' => '',
+			'user' => 2,
+		);
+
 		// Left menu - Rubriques
 		$this->menu[$r++] = array(
 			'fk_menu' => 'fk_mainmenu=modulepaie',
@@ -261,6 +277,10 @@ class modModulePaie extends DolibarrModules
 
 		// Migrations for existing installations (errors ignored if already applied).
 		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX."paie_bulletin ADD COLUMN fk_bank integer DEFAULT NULL");
+		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX."paie_contrat ADD COLUMN taux_pas double(8,4) DEFAULT 0");
+		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX."paie_bulletin ADD COLUMN taux_pas double(8,4) DEFAULT 0");
+		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX."paie_bulletin ADD COLUMN montant_pas double(24,8) DEFAULT 0");
+		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX."paie_bulletin ADD COLUMN net_apres_impot double(24,8) DEFAULT 0");
 
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
