@@ -1,0 +1,182 @@
+# Copyright (C) 2026 Mohamed Chadrak <chadrakassani@gmail.com>
+# Module Paie - Traductions françaises
+
+# Module
+Module500180Name = Paie (Fiches de paie françaises)
+Module500180Desc = Gestion et édition des bulletins de paie au format légal français
+
+# Menus
+MenuPaie = Paie
+MenuBulletins = Bulletins de paie
+MenuNewBulletin = Nouveau bulletin
+MenuSalaries = Salariés
+MenuNewSalarie = Nouveau salarié
+MenuRubriques = Rubriques
+MenuNewRubrique = Nouvelle rubrique
+
+# Généraux
+Bulletin = Bulletin de paie
+Bulletins = Bulletins de paie
+BulletinPaie = Bulletin de paie
+Salarie = Salarié
+Salaries = Salariés
+Rubrique = Rubrique
+Rubriques = Rubriques
+Employeur = Employeur
+Periode = Période
+Du = Du
+Au = au
+DatePaiement = Date de paiement
+NewBulletin = Nouveau bulletin de paie
+NewSalarie = Nouveau salarié
+NewRubrique = Nouvelle rubrique
+
+# Configuration
+ModulePaieSetup = Configuration du module Paie
+ModulePaieSetupPage = Paramétrage de l'employeur et des valeurs par défaut
+EmployeurRaisonSociale = Raison sociale
+EmployeurSiret = SIRET
+EmployeurApe = Code APE / NAF
+EmployeurUrssaf = N° / Centre URSSAF
+EmployeurAdresse = Adresse
+EmployeurCp = Code postal
+EmployeurVille = Ville
+EmployeurConvention = Convention collective
+PlafondSS = Plafond mensuel de la Sécurité sociale (PMSS)
+PlafondSSHelp = Montant mensuel du plafond de la Sécurité sociale (ex. 3925 € en 2025)
+ModelePDF = Modèle de PDF par défaut
+SetupSaved = Configuration enregistrée
+
+# Salarié / contrat
+Matricule = Matricule
+NumeroSecu = N° de sécurité sociale
+Emploi = Emploi / poste
+Qualification = Qualification
+Classification = Classification
+Coefficient = Coefficient
+Niveau = Niveau
+Echelon = Échelon
+Convention = Convention collective
+DateEntree = Date d'entrée
+DateAnciennete = Date d'ancienneté
+DateSortie = Date de sortie
+TypeContrat = Type de contrat
+CategorieSalarie = Catégorie
+Cadre = Cadre
+NonCadre = Non cadre
+SalaireBase = Salaire de base mensuel
+TempsTravail = Temps de travail (h/mois)
+TauxHoraire = Taux horaire
+UtilisateurLie = Utilisateur Dolibarr lié
+SelectUser = Sélectionner un utilisateur
+ContratActif = Salarié actif
+SalarieCree = Salarié créé
+SalarieModifie = Salarié modifié
+SalarieSupprime = Salarié supprimé
+NoContractForUser = Aucun contrat de paie pour cet utilisateur
+
+# Rubrique
+RefRubrique = Code
+LabelRubrique = Libellé
+TypeRubrique = Type
+Gain = Gain / rémunération
+Cotisation = Cotisation
+CategorieRubrique = Catégorie (regroupement légal)
+BaseType = Mode de calcul de la base
+BaseTypeBrut = Sur le brut
+BaseTypePlafond = Sur le plafond (Tranche 1)
+BaseTypeTranche2 = Sur la Tranche 2
+BaseTypeCsg = Assiette CSG/CRDS (98,25 %)
+BaseTypeFixe = Base fixe
+BaseTypeManuel = Saisie manuelle
+BaseFixe = Base fixe
+TauxSalarial = Taux salarial (%)
+TauxPatronal = Taux patronal (%)
+Sens = Sens
+SensPlus = Ajoute au net (+)
+SensMoins = Retire du net (-)
+Soumis = Soumis à cotisations
+Imposable = Déductible de l'impôt
+Position = Position
+Active = Active
+RubriqueCree = Rubrique créée
+RubriqueModifiee = Rubrique modifiée
+RubriqueSupprimee = Rubrique supprimée
+
+# Catégories (bulletin clarifié)
+CatGain = Rémunération
+CatSante = Santé
+CatAtmp = Accidents du travail - Maladies professionnelles
+CatRetraite = Retraite
+CatFamille = Famille
+CatChomage = Assurance chômage
+CatCsgCrds = CSG / CRDS
+CatAutres = Autres contributions dues par l'employeur
+CatAllegement = Allègements et exonérations
+CatNet = Net
+
+# Bulletin - calcul
+SalaireBrut = Salaire brut
+TotalCotisationsSalariales = Total cotisations et contributions salariales
+TotalCotisationsPatronales = Total cotisations et contributions patronales
+NetAPayer = Net à payer avant impôt sur le revenu
+NetAPayerCourt = Net à payer
+NetImposable = Net imposable
+NetSocial = Montant net social
+CoutEmployeur = Coût total employeur
+CumulBrut = Cumul brut annuel
+CumulNetImposable = Cumul net imposable annuel
+CumulNetSocial = Cumul net social annuel
+Base = Base
+Taux = Taux
+PartSalariale = Part salariale
+PartPatronale = Part patronale
+Montant = Montant
+ARetenir = À déduire
+APayer = À payer
+Nombre = Nombre
+Heures = Heures
+
+# Congés
+CongesPayes = Congés payés
+CongesAcquis = Acquis
+CongesPris = Pris
+CongesSolde = Solde
+Jours = jours
+
+# Actions
+GenererBulletin = Générer le bulletin
+RecalculerBulletin = Recalculer
+ValiderBulletin = Valider le bulletin
+Valider = Valider
+MettreEnPaiement = Marquer comme payé
+RepasserBrouillon = Repasser en brouillon
+GenererPDF = Générer le PDF
+AjouterLigne = Ajouter une ligne
+SupprimerLigne = Supprimer
+ConfirmDeleteBulletin = Êtes-vous sûr de vouloir supprimer ce bulletin ?
+ConfirmValidateBulletin = Êtes-vous sûr de vouloir valider ce bulletin ?
+BulletinCree = Bulletin créé
+BulletinModifie = Bulletin modifié
+BulletinValide = Bulletin validé
+BulletinSupprime = Bulletin supprimé
+SelectSalarie = Sélectionner un salarié
+PeriodeDebut = Début de période
+PeriodeFin = Fin de période
+
+# Statuts
+StatusDraft = Brouillon
+StatusValidated = Validé
+StatusPaid = Payé
+
+# PDF
+PdfTitle = BULLETIN DE PAIE
+PdfPeriod = Période de paie
+PdfEmployee = Salarié
+PdfEmployer = Employeur
+PdfNetSocialInfo = Le montant net social est le revenu net servant de base au calcul de certaines prestations sociales.
+PdfConservation = Dans votre intérêt et pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée.
+PdfPaidLeave = Congés payés
+
+# Avertissements
+WarningRates = Les taux de cotisations par défaut sont indicatifs et doivent être vérifiés selon votre convention collective et les notifications URSSAF.
