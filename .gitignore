@@ -1,0 +1,11 @@
+# Dolibarr module build / temp
+modulepaie/temp/
+*.log
+*.zip
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
