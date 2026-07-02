@@ -71,7 +71,7 @@ function loadOwnBulletin($db, $user, $id, $canreadall)
 /*
  * Action : téléchargement sécurisé du PDF.
  */
-if ($action == 'downloadpdf' && $id > 0) {
+if (($action == 'downloadpdf' || $action == 'viewpdf') && $id > 0) {
 	$object = loadOwnBulletin($db, $user, $id, $canreadall);
 	if (!$object) {
 		accessforbidden($langs->trans("AccesNonAutoriseBulletin"));
@@ -82,8 +82,9 @@ if ($action == 'downloadpdf' && $id > 0) {
 	}
 	if (dol_is_file($file)) {
 		clearstatcache();
+		$disposition = ($action == 'viewpdf') ? 'inline' : 'attachment';
 		header('Content-Type: application/pdf');
-		header('Content-Disposition: attachment; filename="'.basename($file).'"');
+		header('Content-Disposition: '.$disposition.'; filename="'.basename($file).'"');
 		header('Content-Length: '.dol_filesize($file));
 		header('Cache-Control: private, must-revalidate');
 		readfile($file);
@@ -181,6 +182,17 @@ if ($id > 0) {
 	print '<td class="right"><strong>'.price($object->total_cot_sal, 0, $langs, 1, -1, 2, $conf->currency).'</strong></td>';
 	print '<td class="right">'.price($object->total_cot_pat, 0, $langs, 1, -1, 2, $conf->currency).'</td></tr>';
 	print '</table></div>';
+
+	// Aperçu PDF intégré (comme les factures).
+	$pdffile = $conf->modulepaie->dir_output.'/'.dol_sanitizeFileName($object->ref).'/'.dol_sanitizeFileName($object->ref).'.pdf';
+	if (dol_is_file($pdffile)) {
+		$viewurl = $_SERVER["PHP_SELF"].'?action=viewpdf&id='.$object->id.'&token='.newToken();
+		print '<br>';
+		print load_fiche_titre($langs->trans("Preview"), '', '');
+		print '<div class="centpercent" style="border:1px solid #ccc;">';
+		print '<iframe src="'.$viewurl.'#toolbar=1" style="width:100%;height:800px;border:0;" title="'.dol_escape_htmltag($object->ref).'.pdf"></iframe>';
+		print '</div>';
+	}
 
 	llxFooter();
 	$db->close();

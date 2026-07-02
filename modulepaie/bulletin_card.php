@@ -21,6 +21,7 @@ if (!$res) die("Include of main fails");
 
 global $conf, $db, $langs, $user;
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 dol_include_once('/modulepaie/class/bulletin.class.php');
 dol_include_once('/modulepaie/class/contrat.class.php');
 dol_include_once('/modulepaie/class/rubrique.class.php');
@@ -229,6 +230,28 @@ if ($action == 'builddoc' && $candwrite && $id > 0) {
 	} else {
 		setEventMessages($object->error, null, 'errors');
 	}
+}
+
+// Direct secure download or inline preview of the PDF (generated on the fly if missing).
+// 'downloadpdf' = attachment ; 'viewpdf' = inline (used by the embedded preview like invoices).
+if (($action == 'downloadpdf' || $action == 'viewpdf') && $id > 0 && $object->status >= PaieBulletin::STATUS_VALIDATED) {
+	$file = $conf->modulepaie->dir_output.'/'.dol_sanitizeFileName($object->ref).'/'.dol_sanitizeFileName($object->ref).'.pdf';
+	if (!dol_is_file($file)) {
+		$object->generateDocument($object->model_pdf, $langs);
+	}
+	if (dol_is_file($file)) {
+		clearstatcache();
+		$disposition = ($action == 'viewpdf') ? 'inline' : 'attachment';
+		header('Content-Type: application/pdf');
+		header('Content-Disposition: '.$disposition.'; filename="'.basename($file).'"');
+		header('Content-Length: '.dol_filesize($file));
+		header('Cache-Control: private, must-revalidate');
+		readfile($file);
+		exit;
+	}
+	setEventMessages($langs->trans("PDFEnCoursGeneration"), null, 'warnings');
+	header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+	exit;
 }
 
 /*
@@ -446,6 +469,7 @@ if ($id > 0) {
 		}
 		if ($object->status >= PaieBulletin::STATUS_VALIDATED) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=builddoc&token='.newToken().'">'.$langs->trans("GenererPDF").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=downloadpdf&token='.newToken().'">'.$langs->trans("TelechargerPDF").'</a>';
 		}
 		if ($object->status == PaieBulletin::STATUS_VALIDATED && $candwrite) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=setpaid&token='.newToken().'">'.$langs->trans("MettreEnPaiement").'</a>';
@@ -528,28 +552,53 @@ function printBulletinLine($l, $editlines, $langs, $conf, $id)
 }
 
 /**
- * Show generated PDF documents for the current bulletin.
+ * Show generated PDF documents for the current bulletin, with an embedded
+ * preview at the bottom of the card (same spirit as invoices).
  *
  * @return string HTML
  */
 function showDocuments()
 {
 	global $conf, $langs, $object;
+
 	$out = '';
 	$dir = $conf->modulepaie->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$viewurl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=viewpdf&token='.newToken();
+	$dlurl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=downloadpdf&token='.newToken();
+
+	$files = array();
 	if (is_dir($dir)) {
 		$files = dol_dir_list($dir, 'files', 0, '\.pdf$');
-		if (count($files)) {
-			$out .= load_fiche_titre($langs->trans("Documents"), '', '');
-			$out .= '<table class="noborder centpercent"><tr class="liste_titre"><th>'.$langs->trans("File").'</th><th></th></tr>';
-			foreach ($files as $f) {
-				$relpath = 'modulepaie/'.dol_sanitizeFileName($object->ref).'/'.$f['name'];
-				$url = DOL_URL_ROOT.'/document.php?modulepart=modulepaie&file='.urlencode(dol_sanitizeFileName($object->ref).'/'.$f['name']);
-				$out .= '<tr class="oddeven"><td><a href="'.$url.'" target="_blank">'.dol_escape_htmltag($f['name']).'</a></td>';
-				$out .= '<td class="right">'.dol_print_size($f['size']).'</td></tr>';
-			}
-			$out .= '</table>';
-		}
 	}
+
+	// --- File list (like the "Documents" box of invoices) ---
+	$out .= '<div class="fichecenter"><div class="fichehalfleft">';
+	$out .= load_fiche_titre($langs->trans("Documents"), '', '');
+	$out .= '<table class="noborder centpercent"><tr class="liste_titre">';
+	$out .= '<th>'.$langs->trans("File").'</th><th class="right">'.$langs->trans("Size").'</th><th class="center">'.$langs->trans("Date").'</th><th></th></tr>';
+	if (count($files)) {
+		foreach ($files as $f) {
+			$out .= '<tr class="oddeven">';
+			$out .= '<td><a href="'.$viewurl.'" target="_blank">'.img_pdf().' '.dol_escape_htmltag($f['name']).'</a></td>';
+			$out .= '<td class="right">'.dol_print_size($f['size']).'</td>';
+			$out .= '<td class="center">'.dol_print_date($f['date'], 'dayhour').'</td>';
+			$out .= '<td class="center"><a href="'.$dlurl.'" title="'.$langs->trans("TelechargerPDF").'">'.img_picto('', 'download').'</a></td>';
+			$out .= '</tr>';
+		}
+	} else {
+		$out .= '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+	}
+	$out .= '</table>';
+	$out .= '</div></div><div class="clearboth"></div>';
+
+	// --- Embedded PDF preview at the bottom, like invoices ---
+	if (count($files)) {
+		$out .= '<br>';
+		$out .= load_fiche_titre($langs->trans("Preview"), '', '');
+		$out .= '<div class="centpercent" style="border:1px solid #ccc;">';
+		$out .= '<iframe src="'.$viewurl.'#toolbar=1" style="width:100%;height:800px;border:0;" title="'.dol_escape_htmltag($object->ref).'.pdf"></iframe>';
+		$out .= '</div>';
+	}
+
 	return $out;
 }

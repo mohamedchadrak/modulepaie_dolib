@@ -68,24 +68,33 @@ if ($id > 0) {
 	print '</div>';
 
 	$dir = $conf->modulepaie->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$cardurl = dol_buildpath('/modulepaie/bulletin_card.php', 1).'?id='.$object->id;
+	$viewurl = $cardurl.'&action=viewpdf&token='.newToken();
+	$dlurl = $cardurl.'&action=downloadpdf&token='.newToken();
+
 	print load_fiche_titre($langs->trans("Documents"), '', '');
-	print '<table class="noborder centpercent"><tr class="liste_titre"><th>'.$langs->trans("File").'</th><th class="right">'.$langs->trans("Size").'</th><th class="center">'.$langs->trans("Date").'</th></tr>';
-	if (is_dir($dir)) {
-		$files = dol_dir_list($dir, 'files', 0, '\.pdf$');
-		if (count($files)) {
-			foreach ($files as $f) {
-				$url = DOL_URL_ROOT.'/document.php?modulepart=modulepaie&file='.urlencode(dol_sanitizeFileName($object->ref).'/'.$f['name']);
-				print '<tr class="oddeven"><td><a href="'.$url.'" target="_blank">'.img_pdf().' '.dol_escape_htmltag($f['name']).'</a></td>';
-				print '<td class="right">'.dol_print_size($f['size']).'</td>';
-				print '<td class="center">'.dol_print_date($f['date'], 'dayhour').'</td></tr>';
-			}
-		} else {
-			print '<tr><td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+	print '<table class="noborder centpercent"><tr class="liste_titre"><th>'.$langs->trans("File").'</th><th class="right">'.$langs->trans("Size").'</th><th class="center">'.$langs->trans("Date").'</th><th></th></tr>';
+	$files = is_dir($dir) ? dol_dir_list($dir, 'files', 0, '\.pdf$') : array();
+	if (count($files)) {
+		foreach ($files as $f) {
+			print '<tr class="oddeven"><td><a href="'.$viewurl.'" target="_blank">'.img_pdf().' '.dol_escape_htmltag($f['name']).'</a></td>';
+			print '<td class="right">'.dol_print_size($f['size']).'</td>';
+			print '<td class="center">'.dol_print_date($f['date'], 'dayhour').'</td>';
+			print '<td class="center"><a href="'.$dlurl.'" title="'.$langs->trans("TelechargerPDF").'">'.img_picto('', 'download').'</a></td></tr>';
 		}
 	} else {
-		print '<tr><td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print '</table>';
+
+	// Embedded preview like invoices.
+	if (count($files)) {
+		print '<br>';
+		print load_fiche_titre($langs->trans("Preview"), '', '');
+		print '<div class="centpercent" style="border:1px solid #ccc;">';
+		print '<iframe src="'.$viewurl.'#toolbar=1" style="width:100%;height:800px;border:0;" title="'.dol_escape_htmltag($object->ref).'.pdf"></iframe>';
+		print '</div>';
+	}
 }
 
 llxFooter();
