@@ -129,6 +129,27 @@ $categories = array('non_cadre' => $langs->trans('NonCadre'), 'cadre' => $langs-
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewSalarie"), '', 'user');
 
+	// --- Pre-fill from the selected Dolibarr user (page reloads on selection). ---
+	$preseluser = GETPOST('fk_user', 'int');
+	$pu = null;
+	if ($preseluser > 0) {
+		$pu = new User($db);
+		if ($pu->fetch($preseluser) <= 0) {
+			$pu = null;
+		}
+	}
+	// Auto-generated matricule (editable).
+	$def_matricule = GETPOST('matricule') ? GETPOST('matricule') : $object->getNextMatricule();
+	$def_emploi = GETPOST('emploi') ? GETPOST('emploi') : ($pu && !empty($pu->job) ? $pu->job : '');
+	$def_salaire = GETPOST('salaire_base') ? GETPOST('salaire_base') : ($pu && !empty($pu->salary) ? price2num($pu->salary) : '');
+	$def_numsecu = GETPOST('num_secu') ? GETPOST('num_secu') : ($pu && !empty($pu->national_registration_number) ? $pu->national_registration_number : '');
+	$def_dateentree = ($pu && !empty($pu->dateemployment)) ? $pu->dateemployment : '';
+	// Weekly hours from the user card converted to monthly (35h -> 151.67).
+	$def_temps = GETPOST('temps_travail');
+	if (!$def_temps) {
+		$def_temps = ($pu && !empty($pu->weeklyhours)) ? price2num(round($pu->weeklyhours * 52 / 12, 2)) : '151.67';
+	}
+
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -136,11 +157,12 @@ if ($action == 'create') {
 	print dol_get_fiche_head();
 	print '<table class="border centpercent">';
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("UtilisateurLie").'</td><td>';
-	print $form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1);
+	print $form->select_dolusers($preseluser, 'fk_user', 1);
+	print ' <span class="opacitymedium">'.$langs->trans("PreRemplissageHelp").'</span>';
 	print '</td></tr>';
-	print '<tr><td>'.$langs->trans("Matricule").'</td><td><input type="text" name="matricule" value="'.dol_escape_htmltag(GETPOST('matricule')).'"></td></tr>';
-	print '<tr><td>'.$langs->trans("NumeroSecu").'</td><td><input type="text" name="num_secu" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('num_secu')).'"></td></tr>';
-	print '<tr><td>'.$langs->trans("Emploi").'</td><td><input type="text" name="emploi" class="minwidth300" value="'.dol_escape_htmltag(GETPOST('emploi')).'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Matricule").'</td><td><input type="text" name="matricule" value="'.dol_escape_htmltag($def_matricule).'"> <span class="opacitymedium">'.$langs->trans("MatriculeAutoHelp").'</span></td></tr>';
+	print '<tr><td>'.$langs->trans("NumeroSecu").'</td><td><input type="text" name="num_secu" class="minwidth200" value="'.dol_escape_htmltag($def_numsecu).'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Emploi").'</td><td><input type="text" name="emploi" class="minwidth300" value="'.dol_escape_htmltag($def_emploi).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Qualification").'</td><td><input type="text" name="qualification" value="'.dol_escape_htmltag(GETPOST('qualification')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Classification").'</td><td><input type="text" name="classification" value="'.dol_escape_htmltag(GETPOST('classification')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Coefficient").'</td><td><input type="text" name="coefficient" class="width75" value="'.dol_escape_htmltag(GETPOST('coefficient')).'"></td></tr>';
@@ -148,13 +170,25 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans("Convention").'</td><td><input type="text" name="convention" class="minwidth300" value="'.dol_escape_htmltag(GETPOST('convention') ? GETPOST('convention') : getDolGlobalString('MODULEPAIE_EMPLOYEUR_CONVENTION')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("TypeContrat").'</td><td>'.$form->selectarray('type_contrat', $typescontrat, GETPOST('type_contrat') ? GETPOST('type_contrat') : 'CDI').'</td></tr>';
 	print '<tr><td>'.$langs->trans("CategorieSalarie").'</td><td>'.$form->selectarray('categorie', $categories, GETPOST('categorie') ? GETPOST('categorie') : 'non_cadre').'</td></tr>';
-	print '<tr><td>'.$langs->trans("DateEntree").'</td><td>'.$form->selectDate('', 'date_entree', 0, 0, 1, '', 1, 0).'</td></tr>';
-	print '<tr><td class="fieldrequired">'.$langs->trans("SalaireBase").'</td><td><input type="text" name="salaire_base" class="width100" value="'.dol_escape_htmltag(GETPOST('salaire_base')).'"> '.$conf->currency.'</td></tr>';
-	print '<tr><td>'.$langs->trans("TempsTravail").'</td><td><input type="text" name="temps_travail" class="width75" value="'.dol_escape_htmltag(GETPOST('temps_travail') ? GETPOST('temps_travail') : '151.67').'"> h</td></tr>';
+	print '<tr><td>'.$langs->trans("DateEntree").'</td><td>'.$form->selectDate($def_dateentree, 'date_entree', 0, 0, 1, '', 1, 0).'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("SalaireBase").'</td><td><input type="text" name="salaire_base" class="width100" value="'.dol_escape_htmltag($def_salaire).'"> '.$conf->currency.'</td></tr>';
+	print '<tr><td>'.$langs->trans("TempsTravail").'</td><td><input type="text" name="temps_travail" class="width75" value="'.dol_escape_htmltag($def_temps).'"> h</td></tr>';
 	print '<tr><td>'.$langs->trans("ContratActif").'</td><td><input type="checkbox" name="active" value="1" checked></td></tr>';
 	print '<tr><td>'.$langs->trans("Note").'</td><td><textarea name="note" class="quatrevingtpercent" rows="2"></textarea></td></tr>';
 	print '</table>';
 	print dol_get_fiche_end();
+
+	// Reload the page with the selected user so fields above get pre-filled.
+	print '<script>
+	jQuery(document).ready(function () {
+		jQuery("#fk_user").on("change", function () {
+			var v = jQuery(this).val();
+			if (v > 0) {
+				window.location.href = "'.dol_escape_js($_SERVER["PHP_SELF"]).'?action=create&fk_user=" + v;
+			}
+		});
+	});
+	</script>';
 
 	print '<div class="center">';
 	print '<input type="submit" class="button button-save" value="'.$langs->trans("Create").'">';

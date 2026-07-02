@@ -51,6 +51,7 @@ $configItems = array(
 	'MODULEPAIE_PDF_MODEL' => 'aZ09',
 	'MODULEPAIE_BANK_ACCOUNT' => 'int',
 	'MODULEPAIE_AUTO_BANK' => 'int',
+	'MODULEPAIE_MATRICULE_PREFIX' => 'alpha',
 );
 
 /*
@@ -133,6 +134,11 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("ModelePDF").'</td><td>';
 $models = array('paiestandard' => 'paiestandard');
 print $form->selectarray('MODULEPAIE_PDF_MODEL', $models, getDolGlobalString('MODULEPAIE_PDF_MODEL', 'paiestandard'), 0);
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>'.$langs->trans("MatriculePrefix").'</td><td>';
+print '<input type="text" name="MODULEPAIE_MATRICULE_PREFIX" class="width75" value="'.dol_escape_htmltag(getDolGlobalString('MODULEPAIE_MATRICULE_PREFIX', 'SAL')).'">';
+print ' <span class="opacitymedium">'.$langs->trans("MatriculePrefixHelp").'</span>';
 print '</td></tr>';
 
 // Banque : écriture automatique du net à payer au passage "Payé".

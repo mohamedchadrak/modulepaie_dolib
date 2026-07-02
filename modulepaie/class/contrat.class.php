@@ -67,6 +67,34 @@ class PaieContrat extends CommonObject
 	}
 
 	/**
+	 * Return the next available matricule (prefix + incremented counter).
+	 * Prefix is configurable via MODULEPAIE_MATRICULE_PREFIX (default 'SAL').
+	 *
+	 * @return string Next matricule, e.g. 'SAL0001'
+	 */
+	public function getNextMatricule()
+	{
+		$prefix = getDolGlobalString('MODULEPAIE_MATRICULE_PREFIX', 'SAL');
+
+		$sql = "SELECT matricule FROM ".MAIN_DB_PREFIX."paie_contrat";
+		$sql .= " WHERE entity IN (".getEntity('paie_contrat').")";
+		$sql .= " AND matricule LIKE '".$this->db->escape($prefix)."%'";
+
+		$max = 0;
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				// Keep only trailing digits after the prefix.
+				$num = (int) preg_replace('/[^0-9]/', '', substr($obj->matricule, strlen($prefix)));
+				if ($num > $max) {
+					$max = $num;
+				}
+			}
+		}
+		return $prefix.sprintf('%04d', $max + 1);
+	}
+
+	/**
 	 * Create in database.
 	 *
 	 * @param  User $user User that creates
@@ -82,6 +110,9 @@ class PaieContrat extends CommonObject
 		}
 		if (empty($this->entity)) {
 			$this->entity = $conf->entity;
+		}
+		if (empty($this->matricule)) {
+			$this->matricule = $this->getNextMatricule();
 		}
 		if (empty($this->temps_travail)) {
 			$this->temps_travail = 151.67;
