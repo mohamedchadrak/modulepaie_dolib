@@ -194,16 +194,16 @@ class pdf_paiestandard
 		$ctp = 18;  // taux patronal
 		$cmp = $w - ($cl + $cb + $cts + $cms + $ctp); // part patronale (fills rest)
 
-		// Table header.
-		$pdf->SetFont('', 'B', 7.5);
+		// Table header (short labels sized to fit column widths, no overflow).
+		$pdf->SetFont('', 'B', 7);
 		$pdf->SetFillColor(230, 230, 230);
 		$pdf->SetXY($x, $y);
-		$pdf->Cell($cl, 6, $outputlangs->transnoentities("LabelRubrique"), 1, 0, 'L', 1);
-		$pdf->Cell($cb, 6, $outputlangs->transnoentities("Base"), 1, 0, 'R', 1);
-		$pdf->Cell($cts, 6, $outputlangs->transnoentities("TauxSalarial"), 1, 0, 'R', 1);
-		$pdf->Cell($cms, 6, $outputlangs->transnoentities("PartSalariale"), 1, 0, 'R', 1);
-		$pdf->Cell($ctp, 6, $outputlangs->transnoentities("TauxPatronal"), 1, 0, 'R', 1);
-		$pdf->Cell($cmp, 6, $outputlangs->transnoentities("PartPatronale"), 1, 1, 'R', 1);
+		$pdf->Cell($cl, 6, $outputlangs->transnoentities("PdfColRubrique"), 1, 0, 'L', 1);
+		$pdf->Cell($cb, 6, $outputlangs->transnoentities("PdfColBase"), 1, 0, 'C', 1);
+		$pdf->Cell($cts, 6, $outputlangs->transnoentities("PdfColTaux"), 1, 0, 'C', 1);
+		$pdf->Cell($cms, 6, $outputlangs->transnoentities("PdfColPartSal"), 1, 0, 'C', 1);
+		$pdf->Cell($ctp, 6, $outputlangs->transnoentities("PdfColTaux"), 1, 0, 'C', 1);
+		$pdf->Cell($cmp, 6, $outputlangs->transnoentities("PdfColPartPat"), 1, 1, 'C', 1);
 		$y += 6;
 
 		// Group lines.
@@ -243,7 +243,7 @@ class pdf_paiestandard
 		$pdf->SetFont('', 'B', 8);
 		$pdf->SetFillColor(215, 225, 240);
 		$pdf->SetXY($x, $y);
-		$pdf->Cell($cl, 6, $outputlangs->transnoentities("SalaireBrut").' / '.$outputlangs->transnoentities("Total"), 1, 0, 'L', 1);
+		$pdf->Cell($cl, 6, $outputlangs->transnoentities("SalaireBrut").' / '.$outputlangs->transnoentities("Total"), 1, 0, 'L', 1, '', 1);
 		$pdf->Cell($cb, 6, price($object->brut, 0, $outputlangs, 0, -1, 2), 1, 0, 'R', 1);
 		$pdf->Cell($cts, 6, '', 1, 0, 'R', 1);
 		$pdf->Cell($cms, 6, price($object->total_cot_sal, 0, $outputlangs, 0, -1, 2), 1, 0, 'R', 1);
@@ -369,7 +369,8 @@ class pdf_paiestandard
 		}
 
 		$isgain = ($l->type == 'gain');
-		$pdf->Cell($cl, $h, $outputlangs->convToOutputCharset($label), 'LR', 0, 'L');
+		// stretch=1: shrink text horizontally if wider than the cell (no overflow on next column).
+		$pdf->Cell($cl, $h, $outputlangs->convToOutputCharset($label), 'LR', 0, 'L', 0, '', 1);
 		$pdf->Cell($cb, $h, price($l->base, 0, $outputlangs, 0, -1, 2), 'LR', 0, 'R');
 
 		if ($isgain) {

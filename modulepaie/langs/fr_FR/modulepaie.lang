@@ -172,6 +172,11 @@ StatusPaid = Payé
 
 # PDF
 PdfTitle = BULLETIN DE PAIE
+PdfColRubrique = Rubrique
+PdfColBase = Base
+PdfColTaux = Taux
+PdfColPartSal = Part salariale
+PdfColPartPat = Part patronale
 PdfPeriod = Période de paie
 PdfEmployee = Salarié
 PdfEmployer = Employeur
