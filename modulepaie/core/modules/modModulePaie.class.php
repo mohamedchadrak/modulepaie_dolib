@@ -115,6 +115,12 @@ class modModulePaie extends DolibarrModules
 		$this->rights[$r][5] = 'validate';
 		$r++;
 
+		$this->rights[$r][0] = $this->numero.'05';
+		$this->rights[$r][1] = 'Consulter ses propres bulletins de paie (self-service salarié)';
+		$this->rights[$r][4] = 'bulletin';
+		$this->rights[$r][5] = 'readmy';
+		$r++;
+
 		$this->rights[$r][0] = $this->numero.'11';
 		$this->rights[$r][1] = 'Gérer les salariés et le catalogue de rubriques';
 		$this->rights[$r][4] = 'config';
@@ -137,7 +143,23 @@ class modModulePaie extends DolibarrModules
 			'langs' => 'modulepaie@modulepaie',
 			'position' => 1000 + $r,
 			'enabled' => '$conf->modulepaie->enabled',
-			'perms' => '$user->rights->modulepaie->bulletin->read',
+			'perms' => '$user->rights->modulepaie->bulletin->read || $user->rights->modulepaie->bulletin->readmy',
+			'target' => '',
+			'user' => 2,
+		);
+
+		// Left menu - Mes bulletins (self-service salarié)
+		$this->menu[$r++] = array(
+			'fk_menu' => 'fk_mainmenu=modulepaie',
+			'type' => 'left',
+			'titre' => 'MenuMesBulletins',
+			'mainmenu' => 'modulepaie',
+			'leftmenu' => 'modulepaie_mesbulletins',
+			'url' => '/modulepaie/mesbulletins.php',
+			'langs' => 'modulepaie@modulepaie',
+			'position' => 1000 + $r,
+			'enabled' => '$conf->modulepaie->enabled',
+			'perms' => '$user->rights->modulepaie->bulletin->readmy',
 			'target' => '',
 			'user' => 2,
 		);

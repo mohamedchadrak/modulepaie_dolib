@@ -34,8 +34,15 @@ dol_include_once('/modulepaie/class/contrat.class.php');
 
 $langs->loadLangs(array("modulepaie@modulepaie"));
 
-if (!$user->rights->modulepaie->bulletin->read) {
+$canreadall = !empty($user->rights->modulepaie->bulletin->read);
+$canreadmy = !empty($user->rights->modulepaie->bulletin->readmy);
+if (!$canreadall && !$canreadmy) {
 	accessforbidden();
+}
+// A self-service employee (only own bulletins) is redirected to their space.
+if (!$canreadall && $canreadmy) {
+	header("Location: ".dol_buildpath('/modulepaie/mesbulletins.php', 1));
+	exit;
 }
 
 llxHeader('', $langs->trans("MenuPaie"));

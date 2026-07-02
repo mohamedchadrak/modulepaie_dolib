@@ -22,6 +22,9 @@ Module Dolibarr **100 % fonctionnel** permettant de gérer et d'éditer des
 - Gestion des **cumuls annuels**.
 - Paramétrage de l'**employeur** (raison sociale, SIRET, code APE/NAF, URSSAF,
   convention collective, plafond de la Sécurité sociale).
+- **Espace self-service salarié** : chaque salarié connecté ne voit et ne
+  télécharge que **ses propres** bulletins validés (menu « Mes bulletins de
+  paie »), sans accès aux bulletins des autres.
 
 ## Compatibilité
 
@@ -47,6 +50,19 @@ Alternative : créer une archive ZIP du dossier `modulepaie/` et l'installer via
    bulletin est pré-rempli avec le salaire de base et les cotisations.
 3. Ajuster si besoin (primes, heures supplémentaires, absences).
 4. **Valider** le bulletin puis **générer le PDF**.
+
+### Donner l'accès self-service à un salarié
+
+Pour qu'un salarié consulte lui-même ses bulletins après connexion :
+
+1. Créer un **utilisateur Dolibarr** pour le salarié (menu Utilisateurs) et le
+   relier à sa fiche salarié (champ *Utilisateur Dolibarr lié*).
+2. Dans **Utilisateurs/Groupes → l'utilisateur → Permissions**, cocher le droit
+   *« Consulter ses propres bulletins de paie (self-service salarié) »* du
+   module Paie.
+3. À sa connexion, le salarié voit le menu **Paie → Mes bulletins de paie** et
+   n'accède qu'à **ses** bulletins **validés** (consultation + téléchargement
+   PDF). Il ne peut ni voir les bulletins des autres, ni les brouillons.
 
 ## Avertissement
 

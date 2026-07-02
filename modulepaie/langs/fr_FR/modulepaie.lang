@@ -8,6 +8,7 @@ Module500180Desc = Gestion et édition des bulletins de paie au format légal fr
 # Menus
 MenuPaie = Paie
 MenuBulletins = Bulletins de paie
+MenuMesBulletins = Mes bulletins de paie
 MenuNewBulletin = Nouveau bulletin
 MenuSalaries = Salariés
 MenuNewSalarie = Nouveau salarié
@@ -177,6 +178,17 @@ PdfEmployer = Employeur
 PdfNetSocialInfo = Le montant net social est le revenu net servant de base au calcul de certaines prestations sociales.
 PdfConservation = Dans votre intérêt et pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée.
 PdfPaidLeave = Congés payés
+
+# Self-service salarié
+MesBulletins = Mes bulletins de paie
+MesBulletinsIntro = Retrouvez ici vos bulletins de paie. Vous pouvez les consulter et les télécharger au format PDF.
+Telecharger = Télécharger
+TelechargerPDF = Télécharger le PDF
+ConsulterBulletin = Consulter
+AucunBulletinDispo = Aucun bulletin de paie disponible pour le moment.
+AccesNonAutoriseBulletin = Vous n'êtes pas autorisé à accéder à ce bulletin.
+PDFEnCoursGeneration = Le PDF n'est pas encore disponible, il est en cours de génération. Merci de réessayer.
+DetailBulletin = Détail du bulletin
 
 # Avertissements
 WarningRates = Les taux de cotisations par défaut sont indicatifs et doivent être vérifiés selon votre convention collective et les notifications URSSAF.
