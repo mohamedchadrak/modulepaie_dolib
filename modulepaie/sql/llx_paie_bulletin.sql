@@ -33,6 +33,7 @@ CREATE TABLE llx_paie_bulletin(
 	conges_acquis    double(10,4) DEFAULT 0,
 	conges_pris      double(10,4) DEFAULT 0,
 	conges_solde     double(10,4) DEFAULT 0,
+	fk_bank          integer DEFAULT NULL,
 	status           integer DEFAULT 0 NOT NULL,
 	note_public      text,
 	note_private     text,

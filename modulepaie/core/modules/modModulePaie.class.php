@@ -53,7 +53,7 @@ class modModulePaie extends DolibarrModules
 		$this->editor_name = 'Mohamed Chadrak';
 		$this->editor_url = 'https://github.com/mohamedchadrak/modulepaie_dolib';
 
-		$this->version = '1.0.0';
+		$this->version = '1.1.0';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto = 'modulepaie@modulepaie';
 
@@ -258,6 +258,9 @@ class modModulePaie extends DolibarrModules
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}
+
+		// Migrations for existing installations (errors ignored if already applied).
+		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX."paie_bulletin ADD COLUMN fk_bank integer DEFAULT NULL");
 
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';

@@ -49,6 +49,8 @@ $configItems = array(
 	'MODULEPAIE_EMPLOYEUR_CONVENTION' => 'alpha',
 	'MODULEPAIE_PMSS' => 'alpha',
 	'MODULEPAIE_PDF_MODEL' => 'aZ09',
+	'MODULEPAIE_BANK_ACCOUNT' => 'int',
+	'MODULEPAIE_AUTO_BANK' => 'int',
 );
 
 /*
@@ -61,6 +63,9 @@ if ($action == 'update') {
 		$value = GETPOST($key, $type);
 		if ($key == 'MODULEPAIE_PMSS') {
 			$value = price2num($value);
+		}
+		if ($key == 'MODULEPAIE_AUTO_BANK') {
+			$value = GETPOST($key, 'int') ? '1' : '0'; // checkbox
 		}
 		$res = dolibarr_set_const($db, $key, $value, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
@@ -128,6 +133,21 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("ModelePDF").'</td><td>';
 $models = array('paiestandard' => 'paiestandard');
 print $form->selectarray('MODULEPAIE_PDF_MODEL', $models, getDolGlobalString('MODULEPAIE_PDF_MODEL', 'paiestandard'), 0);
+print '</td></tr>';
+
+// Banque : écriture automatique du net à payer au passage "Payé".
+print '<tr class="liste_titre"><td>'.$langs->trans("Bank").'</td><td></td></tr>';
+print '<tr class="oddeven"><td>'.$langs->trans("CompteBancairePaie").'</td><td>';
+if (isModEnabled('banque') || isModEnabled('bank')) {
+	print $form->select_comptes(getDolGlobalString('MODULEPAIE_BANK_ACCOUNT'), 'MODULEPAIE_BANK_ACCOUNT', 0, '', 1);
+	print ' <span class="opacitymedium">'.$langs->trans("CompteBancairePaieHelp").'</span>';
+} else {
+	print '<span class="opacitymedium">'.$langs->trans("BankModuleDisabled").'</span>';
+}
+print '</td></tr>';
+print '<tr class="oddeven"><td>'.$langs->trans("AutoEcritureBanque").'</td><td>';
+print '<input type="checkbox" name="MODULEPAIE_AUTO_BANK" value="1" '.(getDolGlobalString('MODULEPAIE_AUTO_BANK', '1') ? 'checked' : '').'>';
+print ' <span class="opacitymedium">'.$langs->trans("AutoEcritureBanqueHelp").'</span>';
 print '</td></tr>';
 
 print '</table>';

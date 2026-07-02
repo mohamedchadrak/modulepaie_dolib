@@ -199,14 +199,23 @@ if ($action == 'confirm_validate' && GETPOST('confirm') == 'yes' && $canvalidate
 	}
 }
 if ($action == 'setdraft' && $candwrite && $id > 0) {
-	$object->setDraft($user);
-	header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-	exit;
+	$res = $object->setDraft($user);
+	if ($res > 0) {
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+		exit;
+	}
+	setEventMessages($object->error == 'BankLineReconciled' ? $langs->trans("ErreurEcritureRapprochee") : $object->error, null, 'errors');
 }
 if ($action == 'setpaid' && $candwrite && $id > 0) {
-	$object->setPaid($user);
-	header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-	exit;
+	$res = $object->setPaid($user);
+	if ($res > 0) {
+		if ($object->fk_bank) {
+			setEventMessages($langs->trans("EcritureBancaireCreee"), null, 'mesgs');
+		}
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+		exit;
+	}
+	setEventMessages($object->error, null, 'errors');
 }
 
 // Delete.
@@ -333,6 +342,11 @@ if ($id > 0) {
 	print '<tr><td>'.$langs->trans("Periode").'</td><td>'.dol_print_date($object->date_debut, 'day').' → '.dol_print_date($object->date_fin, 'day').'</td></tr>';
 	print '<tr><td>'.$langs->trans("DatePaiement").'</td><td>'.($object->date_paiement ? dol_print_date($object->date_paiement, 'day') : '').'</td></tr>';
 	print '<tr><td>'.$langs->trans("Statut").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+	if (!empty($object->fk_bank)) {
+		print '<tr><td>'.$langs->trans("EcritureBancaire").'</td><td>';
+		print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.((int) $object->fk_bank).'">'.img_object('', 'account', 'class="paddingright"').$langs->trans("VoirEcritureBancaire").'</a>';
+		print '</td></tr>';
+	}
 	print '</table>';
 	print '</div>';
 

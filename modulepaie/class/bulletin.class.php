@@ -65,6 +65,8 @@ class PaieBulletin extends CommonObject
 	public $conges_pris;
 	public $conges_solde;
 	public $status;
+	/** @var int Id of the bank transaction line created when the bulletin is paid */
+	public $fk_bank;
 	public $note_public;
 	public $note_private;
 	public $model_pdf;
@@ -277,7 +279,7 @@ class PaieBulletin extends CommonObject
 		$sql = "SELECT rowid, entity, ref, fk_user, fk_contrat, date_debut, date_fin, date_paiement, salaire_base, heures, taux_horaire,";
 		$sql .= " plafond_ss, brut, total_cot_sal, total_cot_pat, net_a_payer, net_imposable, net_social, cout_employeur,";
 		$sql .= " cumul_brut, cumul_net_imp, cumul_net_social, conges_acquis, conges_pris, conges_solde,";
-		$sql .= " status, note_public, note_private, model_pdf, last_main_doc, date_creation, date_validation, fk_user_valid";
+		$sql .= " status, fk_bank, note_public, note_private, model_pdf, last_main_doc, date_creation, date_validation, fk_user_valid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paie_bulletin";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -320,6 +322,7 @@ class PaieBulletin extends CommonObject
 		$this->conges_pris = $obj->conges_pris;
 		$this->conges_solde = $obj->conges_solde;
 		$this->status = $obj->status;
+		$this->fk_bank = $obj->fk_bank;
 		$this->note_public = $obj->note_public;
 		$this->note_private = $obj->note_private;
 		$this->model_pdf = $obj->model_pdf;
@@ -719,35 +722,101 @@ class PaieBulletin extends CommonObject
 
 	/**
 	 * Set the bulletin as paid.
+	 * If a bank account is configured (MODULEPAIE_BANK_ACCOUNT) and the auto
+	 * bank entry option is on (MODULEPAIE_AUTO_BANK, default on), a bank
+	 * transaction of -net_a_payer is written on the account and linked to the
+	 * bulletin (like invoice payments do).
 	 *
 	 * @param  User $user User
 	 * @return int        >0 if OK, <0 if KO
 	 */
 	public function setPaid(User $user)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."paie_bulletin SET status = ".self::STATUS_PAID." WHERE rowid = ".((int) $this->id);
+		global $conf, $langs;
+
+		$this->db->begin();
+
+		$bankline = 0;
+		$accountid = (int) getDolGlobalString('MODULEPAIE_BANK_ACCOUNT');
+		$autobank = getDolGlobalString('MODULEPAIE_AUTO_BANK', '1');
+		if ($accountid > 0 && $autobank && empty($this->fk_bank) && (isModEnabled('banque') || isModEnabled('bank'))) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$acc = new Account($this->db);
+			if ($acc->fetch($accountid) > 0) {
+				$this->fetchSalarie();
+				$label = $langs->trans("Salaire").' '.$this->ref;
+				if ($this->salarie) {
+					$label .= ' - '.$this->salarie->getFullName($langs);
+				}
+				$datepaie = $this->date_paiement ? $this->date_paiement : dol_now();
+				// Negative amount: money leaves the account (net to pay).
+				$bankline = $acc->addline($datepaie, 'VIR', $label, -1 * abs((float) $this->net_a_payer), '', 0, $user);
+				if ($bankline <= 0) {
+					$this->error = $acc->error ? $acc->error : 'ErrorCreatingBankLine';
+					$this->db->rollback();
+					return -2;
+				}
+			}
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."paie_bulletin SET status = ".self::STATUS_PAID;
+		if ($bankline > 0) {
+			$sql .= ", fk_bank = ".((int) $bankline);
+		}
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 		$this->status = self::STATUS_PAID;
+		if ($bankline > 0) {
+			$this->fk_bank = $bankline;
+		}
+		$this->db->commit();
 		return 1;
 	}
 
 	/**
 	 * Set back to draft.
+	 * If a bank transaction was created when the bulletin was paid, it is
+	 * removed so accounting stays consistent (unless already reconciled).
 	 *
 	 * @param  User $user User
 	 * @return int        >0 if OK, <0 if KO
 	 */
 	public function setDraft(User $user)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."paie_bulletin SET status = ".self::STATUS_DRAFT.", date_validation = NULL, fk_user_valid = NULL WHERE rowid = ".((int) $this->id);
+		$this->db->begin();
+
+		// Remove the linked bank line if any.
+		if (!empty($this->fk_bank) && (isModEnabled('banque') || isModEnabled('bank'))) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$bl = new AccountLine($this->db);
+			if ($bl->fetch($this->fk_bank) > 0) {
+				if (!empty($bl->rappro)) {
+					// Reconciled bank line: refuse to silently break accounting.
+					$this->error = 'BankLineReconciled';
+					$this->db->rollback();
+					return -3;
+				}
+				if ($bl->delete($user) < 0) {
+					$this->error = $bl->error;
+					$this->db->rollback();
+					return -2;
+				}
+			}
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."paie_bulletin SET status = ".self::STATUS_DRAFT.", date_validation = NULL, fk_user_valid = NULL, fk_bank = NULL WHERE rowid = ".((int) $this->id);
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 		$this->status = self::STATUS_DRAFT;
+		$this->fk_bank = null;
+		$this->db->commit();
 		return 1;
 	}
 

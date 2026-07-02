@@ -184,6 +184,18 @@ PdfNetSocialInfo = Le montant net social est le revenu net servant de base au ca
 PdfConservation = Dans votre intérêt et pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée.
 PdfPaidLeave = Congés payés
 
+# Banque / comptabilité
+CompteBancairePaie = Compte bancaire des salaires
+CompteBancairePaieHelp = Compte sur lequel l'écriture du net à payer est créée au passage en "Payé"
+AutoEcritureBanque = Écriture bancaire automatique
+AutoEcritureBanqueHelp = Créer automatiquement l'écriture bancaire (net à payer) quand un bulletin est marqué comme payé
+BankModuleDisabled = Le module Banques et caisses n'est pas activé
+EcritureBancaire = Écriture bancaire
+EcritureBancaireCreee = Écriture bancaire créée sur le compte des salaires
+VoirEcritureBancaire = Voir l'écriture bancaire
+ErreurEcritureRapprochee = Impossible de repasser en brouillon : l'écriture bancaire liée est déjà rapprochée
+Salaire = Salaire
+
 # Self-service salarié
 MesBulletins = Mes bulletins de paie
 MesBulletinsIntro = Retrouvez ici vos bulletins de paie. Vous pouvez les consulter et les télécharger au format PDF.
