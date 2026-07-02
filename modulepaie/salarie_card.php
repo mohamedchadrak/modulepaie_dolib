@@ -60,7 +60,7 @@ if ($action == 'add' && $candwrite) {
 	$object->salaire_base = price2num(GETPOST('salaire_base', 'alpha'));
 	$object->temps_travail = price2num(GETPOST('temps_travail', 'alpha'));
 	$object->date_entree = dol_mktime(0, 0, 0, GETPOST('date_entreemonth', 'int'), GETPOST('date_entreeday', 'int'), GETPOST('date_entreeyear', 'int'));
-	$object->date_anciennete = dol_mktime(0, 0, 0, GETPOST('date_anciennetemonth', 'int'), GETPOST('date_annciennetjeday', 'int'), GETPOST('date_anciennetyear', 'int'));
+	$object->date_anciennete = $object->date_entree;
 	$object->active = GETPOST('active', 'int') ? 1 : 0;
 	$object->note = GETPOST('note', 'restricthtml');
 

@@ -36,6 +36,10 @@ class PaieBulletinLigne
 	public $soumis;      // 1 si soumis à cotisations (entre dans le brut)
 	public $imposable;   // 1 si déductible du net imposable (pour cotisations)
 	public $position;
+	/** @var string Mode de calcul de la base (transient, hérité de la rubrique) */
+	public $base_type;
+	/** @var float Base fixe (transient, hérité de la rubrique) */
+	public $base_fixe;
 
 	/**
 	 * Constructor. Optionally hydrate from a stdClass DB row.
