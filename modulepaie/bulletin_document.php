@@ -29,6 +29,9 @@ $langs->loadLangs(array("modulepaie@modulepaie", "other"));
 if (!$user->rights->modulepaie->bulletin->read) {
 	accessforbidden();
 }
+if (empty($conf->modulepaie->dir_output)) {
+	$conf->modulepaie->dir_output = DOL_DATA_ROOT.'/modulepaie';
+}
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');

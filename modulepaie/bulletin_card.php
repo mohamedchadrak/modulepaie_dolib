@@ -33,6 +33,9 @@ if (!$user->rights->modulepaie->bulletin->read) {
 $candwrite = !empty($user->rights->modulepaie->bulletin->write);
 $canvalidate = !empty($user->rights->modulepaie->bulletin->validate);
 $candelete = !empty($user->rights->modulepaie->bulletin->delete);
+if (empty($conf->modulepaie->dir_output)) {
+	$conf->modulepaie->dir_output = DOL_DATA_ROOT.'/modulepaie';
+}
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
