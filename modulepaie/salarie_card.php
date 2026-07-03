@@ -265,9 +265,9 @@ if ($action == 'create') {
 	// Buttons
 	print '<div class="tabsAction">';
 	if ($candwrite) {
-		print '<a class="butAction" href="'.dol_buildpath('/modulepaie/bulletin_card.php', 1).'?action=create&fk_user='.$object->fk_user.'">'.$langs->trans("NewBulletin").'</a>';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit">'.$langs->trans("Modify").'</a>';
-		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete">'.$langs->trans("Delete").'</a>';
+		print '<a class="butAction" href="'.dol_buildpath('/modulepaie/bulletin_card.php', 1).'?action=create&fk_user='.$object->fk_user.'&token='.newToken().'">'.$langs->trans("NewBulletin").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
 	}
 	print '</div>';
 

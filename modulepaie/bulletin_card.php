@@ -477,11 +477,11 @@ if ($id > 0) {
 	if (!$editlines) {
 		print '<div class="tabsAction">';
 		if ($object->status == PaieBulletin::STATUS_DRAFT && $candwrite) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=editlines">'.$langs->trans("Modify").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=editlines&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=recalc&token='.newToken().'">'.$langs->trans("RecalculerBulletin").'</a>';
 		}
 		if ($object->status == PaieBulletin::STATUS_DRAFT && $canvalidate) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=validate">'.$langs->trans("ValiderBulletin").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=validate&token='.newToken().'">'.$langs->trans("ValiderBulletin").'</a>';
 		}
 		if ($object->status >= PaieBulletin::STATUS_VALIDATED) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=builddoc&token='.newToken().'">'.$langs->trans("GenererPDF").'</a>';
@@ -494,7 +494,7 @@ if ($id > 0) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=setdraft&token='.newToken().'">'.$langs->trans("RepasserBrouillon").'</a>';
 		}
 		if ($candelete) {
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
 		}
 		print '</div>';
 

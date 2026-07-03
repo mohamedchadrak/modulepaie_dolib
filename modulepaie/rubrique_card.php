@@ -175,8 +175,8 @@ if ($action == 'create' || ($action == 'edit' && $id > 0)) {
 	print dol_get_fiche_end();
 
 	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit">'.$langs->trans("Modify").'</a>';
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete">'.$langs->trans("Delete").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
 	print '</div>';
 }
 
